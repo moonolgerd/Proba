@@ -1,0 +1,135 @@
+﻿@page "/"
+@inject Fubar fubar
+
+<h1>Sortable HTML table</h1>
+
+@if (data != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="header" onclick="@(() => Click("Greeting"))">
+                    Greeting
+                    <span class="@SortHelper.ClassForColumn("Greeting")"></span>
+                </th>
+                <th class="header" onclick="@(() => Click("Age"))">
+                    Age
+                    <span class="@SortHelper.ClassForColumn("Age")"></span>
+                </th>
+                <th class="header" onclick="@(() => Click("Date"))">
+                    Date
+                    <span class="@SortHelper.ClassForColumn("Date")"></span>
+                </th>
+                <th class="header" onclick="@(() => Click("Percentage"))">
+                    Percentage
+                    <span class="@SortHelper.ClassForColumn("Percentage")"></span>
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in data)
+        {
+
+            <tbody>
+                <tr>
+                    <td>@item.Item1</td>
+                    <td>@item.Item2</td>
+                    <td>@item.Item3</td>
+                    <td>@item.Item4</td>
+                </tr>
+            </tbody>
+        }
+    </table>
+}
+
+
+@functions {
+    IEnumerable<(string, int, DateTime, decimal)> data;
+    bool?[] sortIndices;
+    string bottom;
+
+    protected override async Task OnInitAsync()
+    {
+        data = fubar.Data;
+        sortIndices = SortHelper.Indices;
+    }
+
+    public void Click(string columnName)
+    {
+        Func<(string, int, DateTime, decimal), object> func;
+
+        switch (columnName)
+        {
+            case "Greeting":
+                func = (item) => item.Item1;
+                break;
+            case "Age":
+                func = (item) => item.Item2;
+                break;
+            case "Date":
+                func = (item) => item.Item3;
+                break;
+            case "Percentage":
+            default:
+                func = (item) => item.Item4;
+                break;
+        }
+
+        if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].HasValue)
+        {
+            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = false;
+        }
+        else if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].GetValueOrDefault())
+        {
+            data = fubar.Data.OrderBy(func);
+            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = true;
+        }
+        else
+        {
+            data = fubar.Data.OrderByDescending(func);
+            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = null;
+        }
+    }
+
+    static class SortHelper
+    {
+        public static bool?[] Indices { get; } = new bool?[] { null, null, null, null };
+
+        public static string ClassForColumn(string columnName)
+        {
+            var index = IndexForColumn(columnName);
+            var ascending = Indices[index];
+
+            if (ascending.HasValue)
+            {
+                if (!ascending.Value)
+                {
+                    return "oi oi-caret-bottom";
+                }
+                else
+                {
+                    return "oi oi-caret-top";
+                }
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        public static int IndexForColumn(string columnName)
+        {
+            switch (columnName)
+            {
+                case "Greeting":
+                    return 0;
+                case "Age":
+                    return 1;
+                case "Date":
+                    return 2;
+                case "Percentage":
+                default:
+                    return 3;
+            }
+        }
+    }
+}
