@@ -1,5 +1,4 @@
 ﻿@page "/"
-@inject Fubar fubar
 
 <h1>Sortable HTML table</h1>
 
@@ -31,10 +30,10 @@
 
             <tbody>
                 <tr>
-                    <td>@item.Item1</td>
-                    <td>@item.Item2</td>
-                    <td>@item.Item3</td>
-                    <td>@item.Item4</td>
+                    <td>@item.Greeting</td>
+                    <td>@item.Count</td>
+                    <td>@item.Date.ToDateTime()</td>
+                    <td>@item.Value</td>
                 </tr>
             </tbody>
         }
@@ -43,34 +42,39 @@
 
 
 @functions {
-    IEnumerable<(string, int, DateTime, decimal)> data;
+    IEnumerable<ProbaMessage> data;
     bool?[] sortIndices;
     string bottom;
 
     protected override async Task OnInitAsync()
     {
-        data = fubar.Data;
+        var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
+        var client = new Greet.ProbaServer.ProbaServerClient(channel);
+        var reply = await client.SayHelloAsync(new ProbaRequest());
+        data = reply.Messages;
         sortIndices = SortHelper.Indices;
+
+        await channel.ShutdownAsync();
     }
 
     public void Click(string columnName)
     {
-        Func<(string, int, DateTime, decimal), object> func;
+        Func<ProbaMessage, object> func;
 
         switch (columnName)
         {
             case "Greeting":
-                func = (item) => item.Item1;
+                func = (item) => item.Greeting;
                 break;
             case "Age":
-                func = (item) => item.Item2;
+                func = (item) => item.Count;
                 break;
             case "Date":
-                func = (item) => item.Item3;
+                func = (item) => item.Date;
                 break;
             case "Percentage":
             default:
-                func = (item) => item.Item4;
+                func = (item) => item.Value;
                 break;
         }
 
@@ -80,12 +84,12 @@
         }
         else if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].GetValueOrDefault())
         {
-            data = fubar.Data.OrderBy(func);
+            data = data.OrderBy(func);
             SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = true;
         }
         else
         {
-            data = fubar.Data.OrderByDescending(func);
+            data = data.OrderByDescending(func);
             SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = null;
         }
     }

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package Greet;
+
+// The greeting service definition.
+service ProbaServer {
+  // Sends a greeting
+  rpc SayHello (ProbaRequest) returns (ProbaReply) {}
+}
+
+// The request message containing the user's name.
+message ProbaRequest {
+  string name = 1;
+}
+
+message ProbaReply {
+  repeated ProbaMessage messages = 1;
+}
+
+// The response message containing the greetings.
+message ProbaMessage {
+  string greeting = 1;
+  int32 count = 2;
+  google.protobuf.Timestamp date = 3;
+  double value = 4;
+}
