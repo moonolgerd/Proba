@@ -7,7 +7,7 @@ package Greet;
 // The greeting service definition.
 service ProbaServer {
   // Sends a greeting
-  rpc SayHello (ProbaRequest) returns (ProbaReply) {}
+  rpc SayHello (ProbaRequest) returns (stream ProbaReply) {}
 }
 
 // The request message containing the user's name.

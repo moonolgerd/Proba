@@ -42,7 +42,7 @@
 
 
 @functions {
-    IEnumerable<ProbaMessage> data;
+    List<ProbaMessage> data = new List<ProbaMessage>();
     bool?[] sortIndices;
     string bottom;
 
@@ -50,11 +50,20 @@
     {
         var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
         var client = new Greet.ProbaServer.ProbaServerClient(channel);
-        var reply = await client.SayHelloAsync(new ProbaRequest());
-        data = reply.Messages;
+        using (var reply = client.SayHello(new ProbaRequest()))
+        {
+            while (await reply.ResponseStream.MoveNext())
+            {
+                var current = reply.ResponseStream.Current;
+                foreach (var item in current.Messages)
+                {
+                    data.Add(item);
+                }
+            }
+        }
         sortIndices = SortHelper.Indices;
 
-        await channel.ShutdownAsync();
+        //await channel.ShutdownAsync();
     }
 
     public void Click(string columnName)
@@ -84,12 +93,12 @@
         }
         else if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].GetValueOrDefault())
         {
-            data = data.OrderBy(func);
+            data.OrderBy(func);
             SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = true;
         }
         else
         {
-            data = data.OrderByDescending(func);
+            data.OrderByDescending(func);
             SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = null;
         }
     }

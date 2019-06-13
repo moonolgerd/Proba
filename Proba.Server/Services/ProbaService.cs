@@ -8,7 +8,7 @@ namespace Proba.Server
 {
     public class ProbaService : ProbaServer.ProbaServerBase
     {
-        public override Task<ProbaReply> SayHello(ProbaRequest request, ServerCallContext context)
+        public async override Task SayHello(ProbaRequest request, IServerStreamWriter<ProbaReply> responseStream, ServerCallContext context)
         {
             var reply = new ProbaReply();
 
@@ -41,7 +41,18 @@ namespace Proba.Server
                 Date = Timestamp.FromDateTimeOffset(DateTime.Now.AddMinutes(120).ToUniversalTime())
             });
 
-            return Task.FromResult(reply);
+            await responseStream.WriteAsync(reply);
+
+            var reply2 = new ProbaReply();
+            reply2.Messages.Add(new ProbaMessage
+            {
+                Greeting = "Bye now",
+                Count = 100,
+                Value = 0.45,
+                Date = Timestamp.FromDateTimeOffset(DateTime.Now.AddMinutes(120).ToUniversalTime())
+            });
+
+            await responseStream.WriteAsync(reply2);
         }
     }
 }
