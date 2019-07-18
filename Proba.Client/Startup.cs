@@ -1,7 +1,9 @@
+using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using static Greet.ProbaServer;
 
 namespace Proba
 {
@@ -11,6 +13,11 @@ namespace Proba
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
+            var client = new ProbaServerClient(channel);
+
+            services.AddSingleton<ProbaServerClient>(client);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

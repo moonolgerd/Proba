@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Google.Protobuf.WellKnownTypes;
+@inject ProbaServer.ProbaServerClient ProbaServerClient
 
 <h1>Sortable HTML table</h1>
 
@@ -34,12 +36,13 @@
                     <td>@item.Count</td>
                     <td>@item.Date.ToDateTime()</td>
                     <td>@item.Value</td>
+                    <td><span class="oi oi-circle-x" onclick="@(() => Remove(@item))"></span></td>
                 </tr>
             </tbody>
         }
     </table>
 }
-
+<input type="button" title="Add" onclick="@Add" value="Add a Greeting">
 
 @functions {
     List<ProbaMessage> data = new List<ProbaMessage>();
@@ -48,9 +51,8 @@
 
     protected override async Task OnInitAsync()
     {
-        var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
-        var client = new Greet.ProbaServer.ProbaServerClient(channel);
-        using (var reply = client.SayHello(new ProbaRequest()))
+        
+        using (var reply = ProbaServerClient.SayHello(new ProbaRequest()))
         {
             while (await reply.ResponseStream.MoveNext())
             {
@@ -64,6 +66,21 @@
         sortIndices = SortHelper.Indices;
 
         //await channel.ShutdownAsync();
+    }
+
+    public void Remove(ProbaMessage probaMessage)
+    {
+        data.Remove(probaMessage);
+    }
+
+    public void Add()
+    {
+        data.Add(new ProbaMessage {
+            Count = 5,
+            Greeting = "Salut",
+            Date = Timestamp.FromDateTimeOffset(DateTime.Now.ToUniversalTime()),
+            Value = 12f
+        });
     }
 
     public void Click(string columnName)
