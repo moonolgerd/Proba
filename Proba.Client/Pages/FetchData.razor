@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/fetchdata"
 @using Google.Protobuf.WellKnownTypes;
 @inject ProbaServer.ProbaServerClient ProbaServerClient
 
@@ -9,19 +9,19 @@
     <table class="table">
         <thead>
             <tr>
-                <th class="header" onclick="@(() => Click("Greeting"))">
+                <th class="header" @onclick="@(() => Click("Greeting"))">
                     Greeting
                     <span class="@SortHelper.ClassForColumn("Greeting")"></span>
                 </th>
-                <th class="header" onclick="@(() => Click("Age"))">
+                <th class="header" @onclick="@(() => Click("Age"))">
                     Age
                     <span class="@SortHelper.ClassForColumn("Age")"></span>
                 </th>
-                <th class="header" onclick="@(() => Click("Date"))">
+                <th class="header" @onclick="@(() => Click("Date"))">
                     Date
                     <span class="@SortHelper.ClassForColumn("Date")"></span>
                 </th>
-                <th class="header" onclick="@(() => Click("Percentage"))">
+                <th class="header" @onclick="@(() => Click("Percentage"))">
                     Percentage
                     <span class="@SortHelper.ClassForColumn("Percentage")"></span>
                 </th>
@@ -29,20 +29,19 @@
         </thead>
         @foreach (var item in data)
         {
-
             <tbody>
                 <tr>
                     <td>@item.Greeting</td>
                     <td>@item.Count</td>
                     <td>@item.Date.ToDateTime()</td>
                     <td>@item.Value</td>
-                    <td><span class="oi oi-circle-x" onclick="@(() => Remove(@item))"></span></td>
+                    <td><span class="oi oi-circle-x" @onclick="@(() => Remove(@item))"></span></td>
                 </tr>
             </tbody>
         }
     </table>
 }
-<input type="button" title="Add" onclick="@Add" value="Add a Greeting">
+<input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @functions {
     List<ProbaMessage> data = new List<ProbaMessage>();

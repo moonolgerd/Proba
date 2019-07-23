@@ -7,9 +7,13 @@
         <a target="_blank" class="font-weight-bold" href="https://go.microsoft.com/fwlink/?linkid=2086020">brief survey</a>
     </span>
     and tell us what you think.
+    <button @onclick="@OnClick">OK</button>
 </div>
 
 @functions {
     // Demonstrates how a parent component can supply parameters
     [Parameter] string Title { get; set; }
+
+    [Parameter]
+    EventCallback<UIMouseEventArgs> OnClick { get; set; }
 }

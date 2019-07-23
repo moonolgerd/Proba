@@ -1,0 +1,31 @@
+@page "/todo"
+@using Proba.Models
+<h1>Todo (@todos.Count(todo => !todo.IsDone))</h1>
+
+<input placeholder="Something todo" @bind="@newTodo" />
+<button @onclick="@AddToDo">Add a New ToDo</button>
+
+<ul>
+    @foreach (var todo in todos)
+    {
+
+        <li>
+            <input type="checkbox" @bind="@todo.IsDone" style="visibility:@todo.Visibility" />
+            <input @bind="@todo.Title" style="text-decoration:@todo.TextDecoration" />
+        </li>
+    }
+</ul>
+
+@code {
+    private string newTodo;
+    private IList<TodoItem> todos = new List<TodoItem>();
+
+    void AddToDo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo });
+            newTodo = string.Empty;
+        }
+    }
+}
