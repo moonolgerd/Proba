@@ -1,4 +1,4 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -26,7 +26,7 @@ app {
     }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(125, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(180deg, #155724 0%, #8e9c1e 70%);
 }
 
     .sidebar .top-row {
@@ -130,7 +130,7 @@ app {
 
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */
-        display: block;
+        display: flex;
     }
 }
 

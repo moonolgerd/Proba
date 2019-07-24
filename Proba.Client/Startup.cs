@@ -17,7 +17,7 @@ namespace Proba
             var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
             var client = new ProbaServerClient(channel);
 
-            services.AddSingleton<ProbaServerClient>(client);
+            services.AddSingleton(client);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
