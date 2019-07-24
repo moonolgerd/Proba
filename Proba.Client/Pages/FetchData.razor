@@ -44,13 +44,13 @@
 <input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @functions {
-    List<ProbaMessage> data = new List<ProbaMessage>();
-    bool?[] sortIndices;
-    string bottom;
+        List<ProbaMessage> data = new List<ProbaMessage>();
+        bool?[] sortIndices;
+        string bottom;
 
     protected override async Task OnInitAsync()
     {
-        
+
         using (var reply = ProbaServerClient.SayHello(new ProbaRequest()))
         {
             while (await reply.ResponseStream.MoveNext())
@@ -72,14 +72,16 @@
         data.Remove(probaMessage);
     }
 
-    public void Add()
+    public async Task Add()
     {
-        data.Add(new ProbaMessage {
+        var message = new ProbaMessage
+        {
             Count = 5,
             Greeting = "Salut",
             Date = Timestamp.FromDateTimeOffset(DateTime.Now.ToUniversalTime()),
             Value = 12f
-        });
+        };
+        await ProbaServerClient.AddProbaAsync(message);
     }
 
     public void Click(string columnName)

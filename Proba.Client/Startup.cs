@@ -1,4 +1,4 @@
-using Grpc.Net.Client;
+using Grpc.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,12 +16,15 @@ namespace Proba
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:50051")
-            };
+            //var httpClient = new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://localhost:50051")
+            //};
 
-            var client = GrpcClient.Create<ProbaServerClient>(httpClient);
+            //var client = GrpcClient.Create<ProbaServerClient>(httpClient);
+
+            var channel = new Channel("localhost:50051", ChannelCredentials.Insecure);
+            var client = new ProbaServerClient(channel);
 
             services.AddSingleton(client);
         }
