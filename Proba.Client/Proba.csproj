@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.9.0" />
-    <PackageReference Include="Grpc.Core" Version="1.22.0" />
-    <PackageReference Include="Grpc.Tools" Version="1.22.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Grpc.Net.Client" Version="0.1.22-pre2" />
+    <PackageReference Include="Grpc.Tools" Version="1.22.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Proba.Server\Protos\greet.proto" Link="Protos\greet.proto" />
+    <Protobuf Include="..\Proba.Server\Protos\greet.proto" GrpcServices="Client" Link="Protos\greet.proto" />
   </ItemGroup>
 
 </Project>
