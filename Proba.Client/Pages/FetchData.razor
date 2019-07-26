@@ -1,9 +1,10 @@
 ﻿@page "/fetchdata"
 @using Google.Protobuf.WellKnownTypes;
 @inject ProbaServer.ProbaServerClient ProbaServerClient
+@inject IModalService Modal
 
 <h1>Sortable HTML table</h1>
-
+<BlazoredModal />
 @if (data != null)
 {
     <table class="table">
@@ -44,14 +45,22 @@
 <input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @functions {
-        List<ProbaMessage> data = new List<ProbaMessage>();
-        bool?[] sortIndices;
-        string bottom;
+    List<ProbaMessage> data = new List<ProbaMessage>();
+    bool?[] sortIndices;
 
     protected override async Task OnInitAsync()
     {
+        await GetData();
 
-        using (var reply = ProbaServerClient.SayHello(new ProbaRequest()))
+        sortIndices = SortHelper.Indices;
+
+        //await channel.ShutdownAsync();
+    }
+
+    private async Task GetData()
+    {
+        data.Clear();
+        using (var reply = ProbaServerClient.GetProbas(new ProbaRequest()))
         {
             while (await reply.ResponseStream.MoveNext())
             {
@@ -62,26 +71,19 @@
                 }
             }
         }
-        sortIndices = SortHelper.Indices;
-
-        //await channel.ShutdownAsync();
     }
 
-    public void Remove(ProbaMessage probaMessage)
+    public async Task Remove(ProbaMessage probaMessage)
     {
+        await ProbaServerClient.DeleteProbaAsync(probaMessage);
         data.Remove(probaMessage);
+        await GetData();
     }
 
     public async Task Add()
     {
-        var message = new ProbaMessage
-        {
-            Count = 5,
-            Greeting = "Salut",
-            Date = Timestamp.FromDateTimeOffset(DateTime.Now.ToUniversalTime()),
-            Value = 12f
-        };
-        await ProbaServerClient.AddProbaAsync(message);
+        Modal.Show("Add a Proba", typeof(AddProba));
+        Modal.OnClose += async (ModalResult result) => await GetData();
     }
 
     public void Click(string columnName)

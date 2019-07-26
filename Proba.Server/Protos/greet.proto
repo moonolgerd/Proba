@@ -6,14 +6,20 @@ package Greet;
 
 // The greeting service definition.
 service ProbaServer {
-  // Sends a greeting
-  rpc SayHello (ProbaRequest) returns (stream ProbaReply) {}
-  rpc AddProba (ProbaMessage) returns (ProbaReply) {}
+  rpc GetProbas (ProbaRequest) returns (stream ProbaReply) {}
+  rpc AddProba (ProbaMessage) returns (ProbaActionReply) {}
+  rpc EditProba (ProbaMessage) returns (ProbaActionReply) {}
+  rpc DeleteProba (ProbaMessage) returns (ProbaActionReply) {}
 }
 
 // The request message containing the user's name.
 message ProbaRequest {
   string name = 1;
+}
+
+message ProbaActionReply {
+	string message = 1;
+	bool success = 2;
 }
 
 message ProbaReply {

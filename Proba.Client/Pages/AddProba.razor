@@ -1,0 +1,49 @@
+﻿@inject IModalService ModalService
+@inject ProbaServer.ProbaServerClient ProbaServerClient
+@using Google.Protobuf.WellKnownTypes;
+
+<div class="simple-form">
+
+    <div class="form-group">
+        <label for="movie-name">Proba Name</label>
+        <input @bind="@Proba.Greeting" type="text" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="year">Proba Count</label>
+        <input @bind="@Proba.Count" type="text" class="form-control" />
+    </div>
+
+    @*<div class="form-group">
+        <label for="year">Proba Data</label>
+        <input @bind="@Proba.Date" type="date" class="form-control" />
+    </div>*@
+
+    <div class="form-group">
+        <label for="year">Proba Value</label>
+        <input @bind="@Proba.Value" type="number" class="form-control" />
+    </div>
+
+    <button @onclick="@Save" class="btn btn-primary">Submit</button>
+    <button @onclick="@Cancel" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code {
+    ProbaMessage Proba { get; set; }
+
+    protected override void OnInit()
+    {
+        Proba = new ProbaMessage();
+    }
+
+    async Task Save()
+    {
+        await ProbaServerClient.AddProbaAsync(Proba);
+        ModalService.Close(ModalResult.Ok(Proba));
+    }
+
+    void Cancel()
+    {
+        ModalService.Cancel();
+    }
+}

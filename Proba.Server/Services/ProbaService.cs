@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
@@ -7,7 +8,7 @@ namespace Proba.Server
 {
     public class ProbaService : ProbaServer.ProbaServerBase
     {
-        public async override Task SayHello(ProbaRequest request, IServerStreamWriter<ProbaReply> responseStream, ServerCallContext context)
+        public async override Task GetProbas(ProbaRequest request, IServerStreamWriter<ProbaReply> responseStream, ServerCallContext context)
         {
             var reply = new ProbaReply();
 
@@ -32,16 +33,102 @@ namespace Proba.Server
             //await responseStream.WriteAsync(reply2);
         }
 
-        public async override Task<ProbaReply> AddProba(ProbaMessage request, ServerCallContext context)
+        /// <summary>
+        /// Add proba
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns>ProbaActionReply</returns>
+        public async override Task<ProbaActionReply> AddProba(ProbaMessage request, ServerCallContext context)
         {
+            var reply = new ProbaActionReply();
             using var db = new ProbaContext();
 
-            db.Probas.Add(request);
-            await db.SaveChangesAsync();
+            try
+            {
+                db.Probas.Add(request);
+                await db.SaveChangesAsync();
+                reply.Message = "Successfully added";
 
-            var reply = new ProbaReply();
-            reply.Messages.Add(request);
+            } catch (Exception ex)
+            {
+                WriteException(reply, ex);
+            }        
+            
             return reply;
+        }
+
+        /// <summary>
+        /// Delete proba
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns>ProbaActionReply</returns>
+        public async override Task<ProbaActionReply> DeleteProba(ProbaMessage request, ServerCallContext context)
+        {
+            var reply = new ProbaActionReply();
+            using var db = new ProbaContext();
+
+            try
+            {
+                var r = db.Probas.Remove(request);
+                
+                await db.SaveChangesAsync();
+                reply.Message = "Successfully deleted";
+                reply.Success = true;
+            }
+            catch (Exception ex)
+            {
+                WriteException(reply, ex);
+            }
+
+            return reply;
+        }
+
+        /// <summary>
+        /// Edit proba
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns>ProbaActionReply</returns>
+        public async override Task<ProbaActionReply> EditProba(ProbaMessage request, ServerCallContext context)
+        {
+            var reply = new ProbaActionReply();
+            using var db = new ProbaContext();
+
+            try
+            {
+                var existing = await db.Probas.FindAsync(request.Greeting);
+                
+                if (existing != null)
+                {
+                    existing.Date = request.Date;
+                    existing.Count = request.Count;
+                    existing.Added = request.Added;
+                    db.Probas.Update(existing);
+                    await db.SaveChangesAsync();
+
+                    reply.Message = "Successfully edited";
+                    reply.Success = true;
+                }
+                else
+                {
+                    reply.Message = "Unable to find the item for editing";
+                    reply.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteException(reply, ex);
+            }
+
+            return reply;
+        }
+
+        private static void WriteException(ProbaActionReply reply, Exception ex)
+        {
+            reply.Message = $"Error occured {ex}";
+            reply.Success = false;
         }
     }
 }
