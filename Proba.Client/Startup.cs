@@ -16,7 +16,7 @@ namespace Proba
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddBlazoredModal();
+            
 
             //var httpClient = new HttpClient
             //{
@@ -29,6 +29,7 @@ namespace Proba
             var client = new ProbaServerClient(channel);
 
             services.AddSingleton(client);
+            services.AddBlazoredModal();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

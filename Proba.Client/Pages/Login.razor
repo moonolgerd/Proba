@@ -1,0 +1,41 @@
+﻿@inject IModalService ModalService
+
+<div style="width: 20px">
+    <div class="simple-form">
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input @bind="Email" type="text" id="email" class="form-control" placeholder="Enter your email" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input @bind="Password" type="password" id="password" class="form-control" />
+        </div>
+        
+        <button @onclick="Forgot" class="btn btn-warning">Forgot Password ?</button>
+
+        <button @onclick="OnLogin" class="btn btn-primary">Login</button>
+        <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+    </div>
+</div>
+
+@code {
+    string Email { get; set; }
+    string Password { get; set; }
+    bool ForgotPassword { get; set; }
+
+    void OnLogin()
+    {
+        ModalService.Close(ModalResult.Ok(true));
+    }
+
+    void Cancel()
+    {
+        ModalService.Cancel();
+    }
+
+    void Forgot() {
+
+    }
+}

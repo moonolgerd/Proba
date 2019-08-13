@@ -4,7 +4,6 @@
 @inject IModalService Modal
 
 <h1>Sortable HTML table</h1>
-<BlazoredModal />
 @if (data != null)
 {
     <table class="table">
@@ -80,7 +79,7 @@
         await GetData();
     }
 
-    public async Task Add()
+    public void Add()
     {
         Modal.Show("Add a Proba", typeof(AddProba));
         Modal.OnClose += async (ModalResult result) => await GetData();

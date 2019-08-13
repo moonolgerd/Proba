@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject IModalService Modal
 
 <h1>Hello, world!</h1>
 
@@ -8,6 +9,8 @@ Welcome to your new app.
 
 <p><b>@message</b></p>
 
+<button @onclick="ShowModal" class="btn btn-primary">Login</button>
+
 @code {
 
     private string message;
@@ -15,5 +18,16 @@ Welcome to your new app.
     void ShowMessage()
     {
         message = "Hello";
+    }
+
+    void ShowModal()
+    {
+        Modal.OnClose += ModalClosed;
+        Modal.Show("Login", typeof(Login));
+    }
+
+    void ModalClosed(ModalResult modalResult)
+    {
+
     }
 }
