@@ -1,5 +1,6 @@
 ﻿@page "/fetchdata"
 @using Google.Protobuf.WellKnownTypes;
+@using System.Linq.Expressions;
 @inject ProbaServer.ProbaServerClient ProbaServerClient
 @inject IModalService Modal
 
@@ -9,21 +10,21 @@
     <table class="table">
         <thead>
             <tr>
-                <th class="header" @onclick="@(() => Click("Greeting"))">
+                <th class="header" @onclick="@(() => Click(p => p.Greeting))">
                     Greeting
-                    <span class="@SortHelper.ClassForColumn("Greeting")"></span>
+                    <span class="@GetSortStyle("Greeting")"></span>
                 </th>
-                <th class="header" @onclick="@(() => Click("Age"))">
+                <th class="header" @onclick="@(() => Click(p => p.Count))">
                     Age
-                    <span class="@SortHelper.ClassForColumn("Age")"></span>
+                    <span class="@GetSortStyle("Count")"></span>
                 </th>
-                <th class="header" @onclick="@(() => Click("Date"))">
+                <th class="header" @onclick="@(() => Click(p => p.Date))">
                     Date
-                    <span class="@SortHelper.ClassForColumn("Date")"></span>
+                    <span class="@GetSortStyle("Date")"></span>
                 </th>
-                <th class="header" @onclick="@(() => Click("Percentage"))">
+                <th class="header" @onclick="@(() => Click(p => p.Value))">
                     Percentage
-                    <span class="@SortHelper.ClassForColumn("Percentage")"></span>
+                    <span class="@GetSortStyle("Value")"></span>
                 </th>
             </tr>
         </thead>
@@ -83,16 +84,16 @@
 <input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @functions {
-    bool isAdd { get; set; } = false;
-    List<ProbaMessage> data = new List<ProbaMessage>();
-    bool?[] sortIndices;
+    bool isAdd { get; set; }
+    IEnumerable<ProbaMessage> data { get; set; }
+    private readonly List<ProbaMessage> list = new List<ProbaMessage>();
+    private bool isSortedAscending;
+    private string currentSortColumn;
     ProbaMessage Proba { get; set; }
 
     protected override async Task OnInitAsync()
     {
         await GetData();
-
-        sortIndices = SortHelper.Indices;
 
         Proba = new ProbaMessage();
         //await channel.ShutdownAsync();
@@ -100,7 +101,7 @@
 
     private async Task GetData()
     {
-        data.Clear();
+        list.Clear();
         using (var reply = ProbaServerClient.GetProbas(new ProbaRequest()))
         {
             while (await reply.ResponseStream.MoveNext())
@@ -108,20 +109,21 @@
                 var current = reply.ResponseStream.Current;
                 foreach (var item in current.Messages)
                 {
-                    data.Add(item);
+                    list.Add(item);
                 }
             }
         }
+        data = list;
     }
 
-    public async Task Remove(ProbaMessage probaMessage)
+    private async Task Remove(ProbaMessage probaMessage)
     {
         await ProbaServerClient.DeleteProbaAsync(probaMessage);
-        data.Remove(probaMessage);
+        list.Remove(probaMessage);
         await GetData();
     }
 
-    public void Add()
+    private void Add()
     {
         this.isAdd = true;
         //Modal.Show("Add a Proba", typeof(AddProba));
@@ -140,83 +142,27 @@
         await GetData();
     }
 
-    public void Click(string columnName)
+    private void Click(Expression<Func<ProbaMessage, object>> expression)
     {
-        Func<ProbaMessage, object> func;
+        if (expression.Body is UnaryExpression unaryExpression)
+            GetCurrentSortColumn(unaryExpression.Operand);
+        else 
+            GetCurrentSortColumn(expression.Body);
+        
+        var func = expression.Compile();
 
-        switch (columnName)
-        {
-            case "Greeting":
-                func = (item) => item.Greeting;
-                break;
-            case "Age":
-                func = (item) => item.Count;
-                break;
-            case "Date":
-                func = (item) => item.Date;
-                break;
-            case "Percentage":
-            default:
-                func = (item) => item.Value;
-                break;
-        }
+        data = isSortedAscending ? data.OrderBy(func) : data.OrderByDescending(func);
+        
+        isSortedAscending = !isSortedAscending;
 
-        if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].HasValue)
+        void GetCurrentSortColumn(Expression ex)
         {
-            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = false;
-        }
-        else if (!SortHelper.Indices[SortHelper.IndexForColumn(columnName)].GetValueOrDefault())
-        {
-            data.OrderBy(func);
-            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = true;
-        }
-        else
-        {
-            data.OrderByDescending(func);
-            SortHelper.Indices[SortHelper.IndexForColumn(columnName)] = null;
+            if (ex is MemberExpression memberExpression)
+            {
+                currentSortColumn = memberExpression.Member.Name;
+            }
         }
     }
 
-    static class SortHelper
-    {
-        public static bool?[] Indices { get; } = new bool?[] { null, null, null, null };
-
-        public static string ClassForColumn(string columnName)
-        {
-            var index = IndexForColumn(columnName);
-            var ascending = Indices[index];
-
-            if (ascending.HasValue)
-            {
-                if (!ascending.Value)
-                {
-                    return "oi oi-caret-bottom";
-                }
-                else
-                {
-                    return "oi oi-caret-top";
-                }
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        public static int IndexForColumn(string columnName)
-        {
-            switch (columnName)
-            {
-                case "Greeting":
-                    return 0;
-                case "Age":
-                    return 1;
-                case "Date":
-                    return 2;
-                case "Percentage":
-                default:
-                    return 3;
-            }
-        }
-    }
+    private string GetSortStyle(string columnName) => currentSortColumn != columnName ? string.Empty : $"oi oi-caret-{(isSortedAscending ? "top" : "bottom")}";
 }
