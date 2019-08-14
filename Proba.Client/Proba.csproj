@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
     <AssemblyName>Proba.Client</AssemblyName>
   </PropertyGroup>
 
@@ -10,9 +9,11 @@
     <PackageReference Include="Blazored.Modal" Version="2.0.5" />
     <PackageReference Include="BlazorStrap" Version="1.0.0-preview7-05" />
     <PackageReference Include="Google.Protobuf" Version="3.9.0" />
-    <!--<PackageReference Include="Grpc.Net.Client" Version="0.1.22-pre2" />-->
-    <PackageReference Include="Grpc.Core" Version="1.22.0" />
-    <PackageReference Include="Grpc.Tools" Version="1.22.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="0.1.22-pre2" />
+    <PackageReference Include="Grpc.Tools" Version="1.22.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

@@ -91,7 +91,7 @@
     private string currentSortColumn;
     ProbaMessage Proba { get; set; }
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         await GetData();
 
