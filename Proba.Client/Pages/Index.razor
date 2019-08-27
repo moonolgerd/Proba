@@ -5,14 +5,14 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" @onclick="@ShowMessage" />
+<SurveyPrompt Title="How is Blazor working for you?" @onclick="ShowMessage" />
 
 <p><b>@message</b></p>
 
 <button @onclick="ShowModal" class="btn btn-primary">Login</button>
 
-<BSButton Color="Color.Primary" OnClick="@(() => LiveDemo.Show())">Launch demo modal</BSButton>
-<BSModal @ref="LiveDemo" IgnoreEscape="true" IgnoreClickOnBackdrop="true">
+@*<BSButton Color="Color.Primary" OnClick="@(() => LiveDemo.Show())">Launch demo modal</BSButton>
+<BSModal @ref="LiveDemo" @ref:suppressField IgnoreEscape="true" IgnoreClickOnBackdrop="true">
     <BSModalHeader OnClick="@(() => LiveDemo.Hide())">Modal title</BSModalHeader>
     <BSModalBody>
         <BSBasicInput InputType="InputType.Text" @bind-Value="message"></BSBasicInput>
@@ -22,7 +22,7 @@ Welcome to your new app.
         <BSButton Color="Color.Secondary" OnClick="@(() => LiveDemo.Hide())">Close</BSButton>
         <BSButton Color="Color.Primary" OnClick="@(() => LiveDemo.Hide())">Save Changes</BSButton>
     </BSModalFooter>
-</BSModal>
+</BSModal>*@
 
 @code {
     BSModal LiveDemo;

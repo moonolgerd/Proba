@@ -3,11 +3,26 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Proba.Server
 {
     public class ProbaService : ProbaServer.ProbaServerBase
     {
+        private readonly ILogger<ProbaService> logger;
+
+        public ProbaService(ILogger<ProbaService> logger)
+        {
+            this.logger = logger;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="responseStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async override Task GetProbas(ProbaRequest request, IServerStreamWriter<ProbaReply> responseStream, ServerCallContext context)
         {
             var reply = new ProbaReply();
@@ -20,17 +35,6 @@ namespace Proba.Server
             }
 
             await responseStream.WriteAsync(reply);
-
-            //var reply2 = new ProbaReply();
-            //reply2.Messages.Add(new ProbaMessage
-            //{
-            //    Greeting = "Bye now",
-            //    Count = 100,
-            //    Value = 0.45,
-            //    Date = Timestamp.FromDateTimeOffset(DateTime.Now.AddMinutes(120).ToUniversalTime())
-            //});
-
-            //await responseStream.WriteAsync(reply2);
         }
 
         /// <summary>
@@ -50,7 +54,8 @@ namespace Proba.Server
                 await db.SaveChangesAsync();
                 reply.Message = "Successfully added";
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 WriteException(reply, ex);
             }        
@@ -125,8 +130,9 @@ namespace Proba.Server
             return reply;
         }
 
-        private static void WriteException(ProbaActionReply reply, Exception ex)
+        private void WriteException(ProbaActionReply reply, Exception ex)
         {
+            logger.LogError(ex, ex.Message);
             reply.Message = $"Error occured {ex}";
             reply.Success = false;
         }

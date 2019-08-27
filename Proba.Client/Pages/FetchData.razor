@@ -83,7 +83,7 @@
 
 <input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
-@functions {
+@code {
     bool isAdd { get; set; }
     IEnumerable<ProbaMessage> data { get; set; }
     private readonly List<ProbaMessage> list = new List<ProbaMessage>();
@@ -91,7 +91,7 @@
     private string currentSortColumn;
     ProbaMessage Proba { get; set; }
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         await GetData();
 
