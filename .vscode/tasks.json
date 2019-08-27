@@ -7,6 +7,16 @@
             "type": "process",
             "args": [
                 "build",
+                "${workspaceFolder}/Proba.Server/Proba.Server.csproj"
+            ],
+            "problemMatcher": "$tsc"
+        },
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
                 "${workspaceFolder}/Proba.Client/Proba.csproj"
             ],
             "problemMatcher": "$tsc"
