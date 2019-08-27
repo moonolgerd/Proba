@@ -1,5 +1,4 @@
 using Blazored.Modal;
-using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +32,7 @@ namespace Proba
             };
 
             var client = GrpcClient.Create<ProbaServerClient>(httpClient);
-                        
+
             services.AddSingleton(client);
         }
 
