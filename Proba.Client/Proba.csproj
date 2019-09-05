@@ -4,11 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>Proba.Client</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="Properties\*.*" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="2.0.5" />
     <PackageReference Include="BlazorStrap" Version="1.0.0-preview7-05" />

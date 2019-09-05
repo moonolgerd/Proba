@@ -58,7 +58,7 @@ namespace Proba
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub<App>(selector: "app");
+                endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
