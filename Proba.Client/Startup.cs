@@ -26,12 +26,8 @@ namespace Proba
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
 
-            var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:50051")
-            };
-
-            var client = GrpcClient.Create<ProbaServerClient>(httpClient);
+            var channel = GrpcChannel.ForAddress("https://localhost:50051");
+            var client = new ProbaServerClient(channel);
 
             services.AddSingleton(client);
         }
