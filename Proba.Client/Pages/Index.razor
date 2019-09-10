@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IModalService Modal
+@using Proba.Models
 
 <h1>Hello, world!</h1>
 
@@ -28,6 +29,8 @@ Welcome to your new app.
     BSModal LiveDemo;
     private string message;
     private string message2;
+
+    [CascadingParameter] Persistence Persistence { get; set; }
 
     void ShowMessage()
     {

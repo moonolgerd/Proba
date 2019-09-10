@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Blazored.Modal;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +26,7 @@ namespace Proba
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
+            services.AddBlazoredLocalStorage();
 
             var channel = GrpcChannel.ForAddress("https://localhost:50051");
             var client = new ProbaServerClient(channel);

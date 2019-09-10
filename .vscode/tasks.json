@@ -12,7 +12,7 @@
             "problemMatcher": "$tsc"
         },
         {
-            "label": "build",
+            "label": "build client",
             "command": "dotnet",
             "type": "process",
             "args": [
