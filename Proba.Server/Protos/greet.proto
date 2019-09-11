@@ -6,6 +6,7 @@ package Greet;
 
 // The greeting service definition.
 service ProbaServer {
+  rpc Autorize(AuthorizeRequest) returns (AuthorizeReply) {}
   rpc GetProbas (ProbaRequest) returns (stream ProbaReply) {}
   rpc AddProba (ProbaMessage) returns (ProbaActionReply) {}
   rpc EditProba (ProbaMessage) returns (ProbaActionReply) {}
@@ -32,4 +33,12 @@ message ProbaMessage {
   int32 count = 2;
   google.protobuf.Timestamp date = 3;
   double value = 4;
+}
+
+message AuthorizeRequest {
+	string name = 1;
+}
+
+message AuthorizeReply {
+	string token = 1;
 }

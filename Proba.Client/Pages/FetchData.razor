@@ -2,7 +2,9 @@
 @using Google.Protobuf.WellKnownTypes;
 @using System.Linq.Expressions;
 @inject ProbaServer.ProbaServerClient ProbaServerClient
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IModalService Modal
+@attribute [Authorize(Policy = "User")]
 
 <h1>Sortable HTML table</h1>
 @if (data != null)
@@ -84,6 +86,7 @@
 <input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @code {
+    string token;
     bool isAdd { get; set; }
     IEnumerable<ProbaMessage> data { get; set; }
     private readonly List<ProbaMessage> list = new List<ProbaMessage>();
@@ -93,6 +96,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        token = await LocalStorage.GetItemAsync<string>("token");
         await GetData();
 
         Proba = new ProbaMessage();
@@ -102,7 +106,10 @@
     private async Task GetData()
     {
         list.Clear();
-        using (var reply = ProbaServerClient.GetProbas(new ProbaRequest()))
+        using (var reply = ProbaServerClient.GetProbas(new ProbaRequest(), new Metadata
+        {
+                { "Authorization", token }
+            }))
         {
             while (await reply.ResponseStream.MoveNext())
             {
@@ -146,13 +153,13 @@
     {
         if (expression.Body is UnaryExpression unaryExpression)
             GetCurrentSortColumn(unaryExpression.Operand);
-        else 
+        else
             GetCurrentSortColumn(expression.Body);
-        
+
         var func = expression.Compile();
 
         data = isSortedAscending ? data.OrderBy(func) : data.OrderByDescending(func);
-        
+
         isSortedAscending = !isSortedAscending;
 
         void GetCurrentSortColumn(Expression ex)

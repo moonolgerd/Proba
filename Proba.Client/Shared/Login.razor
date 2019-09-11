@@ -1,4 +1,6 @@
 ﻿@inject IModalService ModalService
+@inject ProbaServer.ProbaServerClient ProbaServerClient
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <div>
     <div class="simple-form">
@@ -12,7 +14,7 @@
             <label for="password">Password</label>
             <input @bind="Password" type="password" id="password" class="form-control" />
         </div>
-        
+
         <button @onclick="Forgot" class="btn btn-warning">Forgot Password ?</button>
 
         <button @onclick="OnLogin" class="btn btn-primary">Login</button>
@@ -25,9 +27,15 @@
     string Password { get; set; }
     bool ForgotPassword { get; set; }
 
-    void OnLogin()
+    async Task OnLogin()
     {
-        ModalService.Close(ModalResult.Ok(true));
+        var reply = await ProbaServerClient.AutorizeAsync(new AuthorizeRequest { Name = Email });
+        if (reply.Token != null)
+        {
+            var token = $"Bearer {reply.Token}";
+            await LocalStorage.SetItemAsync("token", token);
+            ModalService.Close(ModalResult.Ok(true));
+        }
     }
 
     void Cancel()
@@ -35,7 +43,8 @@
         ModalService.Cancel();
     }
 
-    void Forgot() {
+    void Forgot()
+    {
 
     }
 }
