@@ -6,15 +6,16 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="2.0.13" />
-    <PackageReference Include="Blazored.Modal" Version="2.0.7" />
-    <PackageReference Include="BlazorStrap" Version="1.0.0-preview7-05" />
-    <PackageReference Include="Google.Protobuf" Version="3.9.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="0.2.23-pre1" />
+    <PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
+    <PackageReference Include="Blazored.Modal" Version="2.1.1" />
+    <PackageReference Include="BlazorStrap" Version="1.0.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.9.2" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.23.2" />
     <PackageReference Include="Grpc.Tools" Version="2.23.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="UsefulLibrary" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
