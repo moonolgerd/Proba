@@ -93,10 +93,12 @@
     private bool isSortedAscending;
     private string currentSortColumn;
     ProbaMessage Proba { get; set; }
+    private Metadata Metadata { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         token = await LocalStorage.GetItemAsync<string>("token");
+        Metadata = new Metadata { { "Authorization", token } };
         await GetData();
 
         Proba = new ProbaMessage();
@@ -106,26 +108,22 @@
     private async Task GetData()
     {
         list.Clear();
-        using (var reply = ProbaServerClient.GetProbas(new ProbaRequest(), new Metadata
+        using var reply = ProbaServerClient.GetProbas(new ProbaRequest(), Metadata);
+
+        while (await reply.ResponseStream.MoveNext())
         {
-                { "Authorization", token }
-            }))
-        {
-            while (await reply.ResponseStream.MoveNext())
-            {
-                var current = reply.ResponseStream.Current;
-                foreach (var item in current.Messages)
-                {
-                    list.Add(item);
-                }
-            }
+            var current = reply.ResponseStream.Current;
+            list.AddRange(current.Messages);
         }
+
         data = list;
     }
 
+
+
     private async Task Remove(ProbaMessage probaMessage)
     {
-        await ProbaServerClient.DeleteProbaAsync(probaMessage);
+        await ProbaServerClient.DeleteProbaAsync(probaMessage, Metadata);
         list.Remove(probaMessage);
         await GetData();
     }
@@ -144,7 +142,7 @@
 
     async Task Save()
     {
-        await ProbaServerClient.AddProbaAsync(Proba);
+        await ProbaServerClient.AddProbaAsync(Proba, Metadata);
         this.isAdd = false;
         await GetData();
     }
