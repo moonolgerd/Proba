@@ -1,6 +1,7 @@
 ﻿@inject IModalService ModalService
 @inject ProbaServer.ProbaServerClient ProbaServerClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject CustomAuthStateProvider AuthenticationStateProvider
 
 <div>
     <div class="simple-form">
@@ -34,6 +35,7 @@
         {
             var token = $"Bearer {reply.Token}";
             await LocalStorage.SetItemAsync("token", token);
+            AuthenticationStateProvider.MarkUserAsAuthenticated(Email);
             ModalService.Close(ModalResult.Ok(true));
         }
     }

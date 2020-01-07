@@ -54,7 +54,7 @@ namespace Proba.Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ProbaService>();
+                endpoints.MapGrpcService<ProbaService>().RequireAuthorization("User");
 
                 endpoints.MapGet("/", async context =>
                 {

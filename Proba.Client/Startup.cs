@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Blazored.Modal;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,12 @@ namespace Proba
             var client = new ProbaServerClient(channel);
 
             services.AddSingleton(client);
+
+            services.AddAuthenticationCore();
+            services.AddAuthorizationCore();
+
+            services.AddScoped<CustomAuthStateProvider>();
+            services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthStateProvider>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

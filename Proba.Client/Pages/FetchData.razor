@@ -4,7 +4,6 @@
 @inject ProbaServer.ProbaServerClient ProbaServerClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IModalService Modal
-@attribute [Authorize(Policy = "User")]
 
 <h1>Sortable HTML table</h1>
 @if (data != null)
@@ -98,7 +97,8 @@
     protected override async Task OnInitializedAsync()
     {
         token = await LocalStorage.GetItemAsync<string>("token");
-        Metadata = new Metadata { { "Authorization", token } };
+
+        Metadata = token == null ? null : new Metadata { { "Authorization", token } };
         await GetData();
 
         Proba = new ProbaMessage();
