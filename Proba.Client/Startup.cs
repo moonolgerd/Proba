@@ -1,3 +1,4 @@
+using Blazor.Notifications;
 using Blazored.LocalStorage;
 using Blazored.Modal;
 using Grpc.Net.Client;
@@ -28,6 +29,8 @@ namespace Proba
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
             services.AddBlazoredLocalStorage();
+
+            services.AddNotifications();
 
             var channel = GrpcChannel.ForAddress("https://localhost:50051");
             var client = new ProbaServerClient(channel);

@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject IJSRuntime JSRuntime
+@inject Blazor.Notifications.NotificationService NotificationService
 
 @using Proba.Models
 
@@ -9,28 +9,15 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" @onclick="ShowMessage" />
 
+<button @onclick="NotifyMe">Notify Me</button>
+
 <p><b>@message</b></p>
 
-<button @onclick="NotifyMe">Notify me!</button>
-
-@*<BSButton Color="Color.Primary" OnClick="@(() => LiveDemo.Show())">Launch demo modal</BSButton>
-    <BSModal @ref="LiveDemo" @ref:suppressField IgnoreEscape="true" IgnoreClickOnBackdrop="true">
-        <BSModalHeader OnClick="@(() => LiveDemo.Hide())">Modal title</BSModalHeader>
-        <BSModalBody>
-            <BSBasicInput InputType="InputType.Text" @bind-Value="message"></BSBasicInput>
-            <BSBasicInput InputType="InputType.Password" @bind-Value="message2"></BSBasicInput>
-        </BSModalBody>
-        <BSModalFooter>
-            <BSButton Color="Color.Secondary" OnClick="@(() => LiveDemo.Hide())">Close</BSButton>
-            <BSButton Color="Color.Primary" OnClick="@(() => LiveDemo.Hide())">Save Changes</BSButton>
-        </BSModalFooter>
-    </BSModal>*@
 
 @code {
-    BSModal LiveDemo;
+    
     private string message;
-    private string message2;
-
+    
     [CascadingParameter] Persistence Persistence { get; set; }
 
     void ShowMessage()
@@ -40,10 +27,6 @@ Welcome to your new app.
 
     async Task NotifyMe()
     {
-        var name = await JSRuntime.InvokeAsync<string>(
-                "notifyMe",
-                "What's your name?");
+        await NotificationService.CreateAsync("Hello from Blazor Notifier");
     }
-
-
 }

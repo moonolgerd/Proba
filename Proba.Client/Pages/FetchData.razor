@@ -1,9 +1,13 @@
 ﻿@page "/fetchdata"
-@using Google.Protobuf.WellKnownTypes;
-@using System.Linq.Expressions;
+@using Google.Protobuf.WellKnownTypes
+@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Authorization
 @inject ProbaServer.ProbaServerClient ProbaServerClient
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IAuthorizationService AuthorizationService
 @inject IModalService Modal
+
+@attribute [Authorize]
 
 <h1>Sortable HTML table</h1>
 @if (data != null)
@@ -82,7 +86,7 @@
     }
 }
 
-<input type="button" title="Add" @onclick="@Add" value="Add a Greeting" />
+<input type="button" class="btn btn-outline-danger" title="Add" @onclick="@Add" value="Add a Greeting" />
 
 @code {
     string token;
@@ -93,6 +97,9 @@
     private string currentSortColumn;
     ProbaMessage Proba { get; set; }
     private Metadata Metadata { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

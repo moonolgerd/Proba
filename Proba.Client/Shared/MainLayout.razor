@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
 @inject IModalService Modal
 @using Proba.Models
+@using Microsoft.AspNetCore.Components.Authorization
 <BlazoredModal />
 
 <div class="sidebar">
@@ -9,7 +10,19 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <button @onclick="ShowModal" class="btn btn-primary">Login</button>
+
+        <AuthorizeView>
+            <Authorized>
+                Hello, @context.User.Identity.Name!
+            </Authorized>
+            
+            <NotAuthorized>
+                <button @onclick="ShowModal" class="btn btn-primary">Login</button>
+                
+            </NotAuthorized>
+        </AuthorizeView>
+
+        
         <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
     </div>
 
@@ -21,6 +34,10 @@
 </div>
 
 @code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     public Persistence Persistence { get; set; }
     protected override void OnInitialized()
     {

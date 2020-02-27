@@ -16,15 +16,21 @@ namespace Proba
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var savedToken = await LocalStorage.GetItemAsync<string>("token");
+            try
+            {
+                var savedToken = await LocalStorage.GetItemAsync<string>("token");
 
-            if (string.IsNullOrWhiteSpace(savedToken))
+                if (string.IsNullOrWhiteSpace(savedToken))
+                {
+                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                }
+
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ClaimTypes.Name)));
+            }
+            catch
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
-
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ClaimTypes.Name)));
-
         }
 
         public void MarkUserAsAuthenticated(string email)
