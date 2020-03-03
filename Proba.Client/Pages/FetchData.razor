@@ -103,12 +103,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        token = await LocalStorage.GetItemAsync<string>("token");
+        var result = await authenticationStateTask;
+        if (result.User.Identity.IsAuthenticated)
+        {
+            token = await LocalStorage.GetItemAsync<string>("token");
 
-        Metadata = token == null ? null : new Metadata { { "Authorization", token } };
-        await GetData();
+            Metadata = token == null ? null : new Metadata { { "Authorization", token } };
+            await GetData();
 
-        Proba = new ProbaMessage();
+            Proba = new ProbaMessage();
+        }
+
         //await channel.ShutdownAsync();
     }
 

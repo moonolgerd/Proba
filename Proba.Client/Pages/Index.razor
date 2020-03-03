@@ -1,29 +1,14 @@
 ﻿@page "/"
 @inject Blazor.Notifications.NotificationService NotificationService
 
-@using Proba.Models
-
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" @onclick="ShowMessage" />
-
 <button @onclick="NotifyMe">Notify Me</button>
-
-<p><b>@message</b></p>
-
 
 @code {
     
-    private string message;
-    
-    [CascadingParameter] Persistence Persistence { get; set; }
-
-    void ShowMessage()
-    {
-        message = "Hello" + Persistence.IsAuthenticated;
-    }
 
     async Task NotifyMe()
     {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -23,13 +24,16 @@ namespace Proba.Server
             {
                 options.DefaultAuthenticateScheme = "bearer";
                 options.DefaultChallengeScheme = "bearer";
-            }).AddJwtBearer("bearer", options => options.TokenValidationParameters = new TokenValidationParameters
+            }).AddJwtBearer("bearer", options =>
             {
-                ValidateLifetime = true,
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the server key used to sign the JWT token is here, use more than 16 chars"))
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateLifetime = true,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the server key used to sign the JWT token is here, use more than 16 chars"))
+                };
             });
             services.AddAuthorization(options =>
             {
@@ -38,6 +42,7 @@ namespace Proba.Server
                     policy.RequireClaim(ClaimTypes.Name);
                 });
             });
+            services.AddDbContext<ProbaContext>(options => options.UseSqlite("Data Source=proba.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

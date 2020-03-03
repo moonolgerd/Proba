@@ -15,11 +15,13 @@ namespace Proba.Server
     public class ProbaService : ProbaServer.ProbaServerBase
     {
         private readonly ILogger<ProbaService> logger;
+        private readonly ProbaContext db;
         private readonly SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the server key used to sign the JWT token is here, use more than 16 chars"));
 
-        public ProbaService(ILogger<ProbaService> logger)
+        public ProbaService(ILogger<ProbaService> logger, ProbaContext db)
         {
             this.logger = logger;
+            this.db = db;
         }
 
         [AllowAnonymous]
@@ -28,7 +30,8 @@ namespace Proba.Server
             var token = new JwtSecurityToken(
                 expires: DateTime.Now.AddMinutes(10),
                 claims: new Claim[] {
-                    new Claim(ClaimTypes.Name, request.Name),
+                    new Claim(ClaimTypes.Name, "Oleg"),
+                    new Claim(ClaimTypes.Email, request.Name),
                     new Claim(ClaimTypes.Role, "User")
                 },
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
@@ -48,7 +51,6 @@ namespace Proba.Server
         {
             var reply = new ProbaReply();
 
-            using var db = new ProbaContext();
             foreach (var proba in db.Probas)
             {
                 proba.Date = Timestamp.FromDateTimeOffset(proba.Added.ToUniversalTime());
@@ -68,7 +70,6 @@ namespace Proba.Server
         public async override Task<ProbaActionReply> AddProba(ProbaMessage request, ServerCallContext context)
         {
             var reply = new ProbaActionReply();
-            using var db = new ProbaContext();
 
             try
             {
@@ -95,8 +96,7 @@ namespace Proba.Server
         public async override Task<ProbaActionReply> DeleteProba(ProbaMessage request, ServerCallContext context)
         {
             var reply = new ProbaActionReply();
-            using var db = new ProbaContext();
-
+            
             try
             {
                 var r = db.Probas.Remove(request);
@@ -123,8 +123,7 @@ namespace Proba.Server
         public async override Task<ProbaActionReply> EditProba(ProbaMessage request, ServerCallContext context)
         {
             var reply = new ProbaActionReply();
-            using var db = new ProbaContext();
-
+            
             try
             {
                 var existing = await db.Probas.FindAsync(request.Greeting);

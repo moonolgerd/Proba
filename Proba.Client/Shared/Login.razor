@@ -34,8 +34,8 @@
         if (reply.Token != null)
         {
             var token = $"Bearer {reply.Token}";
-            await LocalStorage.SetItemAsync("token", token);
-            AuthenticationStateProvider.MarkUserAsAuthenticated(Email);
+            
+            await AuthenticationStateProvider.MarkUserAsAuthenticated(token);
             ModalService.Close(ModalResult.Ok(true));
         }
     }

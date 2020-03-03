@@ -8,9 +8,8 @@ namespace Proba.Server
     {
         public DbSet<ProbaMessage> Probas { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ProbaContext(DbContextOptions options): base(options)
         {
-            optionsBuilder.UseSqlite("Data Source=proba.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

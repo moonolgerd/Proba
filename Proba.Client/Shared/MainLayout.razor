@@ -1,7 +1,8 @@
 @inherits LayoutComponentBase
-@inject IModalService Modal
-@using Proba.Models
 @using Microsoft.AspNetCore.Components.Authorization
+@inject IModalService Modal
+@inject CustomAuthStateProvider CustomAuthStateProvider
+
 <BlazoredModal />
 
 <div class="sidebar">
@@ -14,22 +15,22 @@
         <AuthorizeView>
             <Authorized>
                 Hello, @context.User.Identity.Name!
+
+                <button @onclick="Logout" class="btn btn-secondary">Logout</button>
             </Authorized>
-            
+
             <NotAuthorized>
                 <button @onclick="ShowModal" class="btn btn-primary">Login</button>
-                
+
             </NotAuthorized>
         </AuthorizeView>
 
-        
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
     </div>
 
     <div class="content px-4">
-        <CascadingValue Value="@Persistence">
+        <CascadingAuthenticationState>
             @Body
-        </CascadingValue>
+        </CascadingAuthenticationState>
     </div>
 </div>
 
@@ -38,10 +39,9 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
 
-    public Persistence Persistence { get; set; }
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Persistence = new Persistence();
+        var result = await authenticationStateTask;
     }
 
     void ShowModal()
@@ -53,6 +53,11 @@
     void ModalClosed(ModalResult modalResult)
     {
 
+    }
+
+    async Task Logout()
+    {
+        await CustomAuthStateProvider.MarkUserAsLoggedOut();
     }
 }
 
