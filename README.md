@@ -1,3 +1,4 @@
+![.NET Core](https://github.com/moonolgerd/Proba/workflows/.NET%20Core/badge.svg)
 
 # Summary
 
