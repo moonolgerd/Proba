@@ -29,6 +29,8 @@
 </div>
 
 @code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
     ProbaMessage Proba { get; set; }
 
     protected override void OnInitialized()
@@ -39,11 +41,11 @@
     async Task Save()
     {
         await ProbaServerClient.AddProbaAsync(Proba);
-        ModalService.Close(ModalResult.Ok(Proba));
+        BlazoredModal.Close(ModalResult.Ok(Proba));
     }
 
     void Cancel()
     {
-        ModalService.Cancel();
+        BlazoredModal.Cancel();
     }
 }

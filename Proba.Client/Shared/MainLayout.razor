@@ -20,7 +20,7 @@
             </Authorized>
 
             <NotAuthorized>
-                <button @onclick="ShowModal" class="btn btn-primary">Login</button>
+                <button @onclick="Login" class="btn btn-primary">Login</button>
 
             </NotAuthorized>
         </AuthorizeView>
@@ -44,15 +44,10 @@
         var result = await authenticationStateTask;
     }
 
-    void ShowModal()
+    async Task Login()
     {
-        Modal.OnClose += ModalClosed;
-        Modal.Show("Login", typeof(Login));
-    }
-
-    void ModalClosed(ModalResult modalResult)
-    {
-
+        var loginModal = Modal.Show<Login>("Login");
+        await loginModal.Result;
     }
 
     async Task Logout()

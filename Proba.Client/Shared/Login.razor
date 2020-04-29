@@ -18,12 +18,14 @@
 
         <button @onclick="Forgot" class="btn btn-warning">Forgot Password ?</button>
 
-        <button @onclick="OnLogin" class="btn btn-primary">Login</button>
+        <button @onclick="OnLogin" disabled="@(string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))" class="btn btn-primary">Login</button>
         <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
     </div>
 </div>
 
 @code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
     string Email { get; set; }
     string Password { get; set; }
     bool ForgotPassword { get; set; }
@@ -34,15 +36,15 @@
         if (reply.Token != null)
         {
             var token = $"Bearer {reply.Token}";
-            
+
             await AuthenticationStateProvider.MarkUserAsAuthenticated(token);
-            ModalService.Close(ModalResult.Ok(true));
+            BlazoredModal.Close(ModalResult.Ok(true));
         }
     }
 
     void Cancel()
     {
-        ModalService.Cancel();
+        BlazoredModal.Cancel();
     }
 
     void Forgot()
