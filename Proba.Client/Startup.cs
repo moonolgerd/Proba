@@ -1,6 +1,7 @@
 using Blazor.Notifications;
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using BlazorStrap;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -27,6 +28,7 @@ namespace Proba
             services.AddServerSideBlazor();
             services.AddBlazoredModal();
             services.AddBlazoredLocalStorage();
+            services.AddBootstrapCss();
 
             services.AddNotifications();
 

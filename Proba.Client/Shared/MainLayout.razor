@@ -1,9 +1,6 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
-@inject IModalService Modal
 @inject CustomAuthStateProvider CustomAuthStateProvider
-
-<BlazoredModal />
 
 <div class="sidebar">
     <NavMenu />
@@ -38,6 +35,7 @@
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter] public IModalService Modal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

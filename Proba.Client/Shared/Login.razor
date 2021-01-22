@@ -38,15 +38,12 @@
             var token = $"Bearer {reply.Token}";
 
             await AuthenticationStateProvider.MarkUserAsAuthenticated(token);
-            BlazoredModal.Close(ModalResult.Ok(true));
+            await BlazoredModal.CloseAsync(ModalResult.Ok(true));
         }
     }
 
-    void Cancel()
-    {
-        BlazoredModal.Cancel();
-    }
-
+    async Task Cancel() => await BlazoredModal.CancelAsync();
+    
     void Forgot()
     {
 

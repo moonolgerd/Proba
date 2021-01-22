@@ -41,11 +41,11 @@
     async Task Save()
     {
         await ProbaServerClient.AddProbaAsync(Proba);
-        BlazoredModal.Close(ModalResult.Ok(Proba));
+        await BlazoredModal.CloseAsync(ModalResult.Ok(Proba));
     }
 
-    void Cancel()
+    async Task Cancel()
     {
-        BlazoredModal.Cancel();
+        await BlazoredModal.CancelAsync();
     }
 }
