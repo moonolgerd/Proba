@@ -16,7 +16,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Publish
-      run: dotnet publish Proba.Client/Apricot.csproj -c Release
+      run: dotnet publish Proba.Client/Proba.csproj -c Release
     - name: Add .nojekyll file
       run: touch Proba.Client/bin/Release/net5.0/publish/wwwroot/.nojekyll
     - name: GitHub Pages
