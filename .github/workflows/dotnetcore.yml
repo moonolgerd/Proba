@@ -12,6 +12,16 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 5.0.x
     - name: Build with dotnet
       run: dotnet build --configuration Release
+    - name: Publish
+      run: dotnet publish Proba.Client/Apricot.csproj -c Release
+    - name: Add .nojekyll file
+      run: touch Proba.Client/bin/Release/net5.0/publish/wwwroot/.nojekyll
+    - name: GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        FOLDER: Proba.Client/bin/Release/net5.0/publish/wwwroot
+        BRANCH: gh-pages
